@@ -1,7 +1,7 @@
 Feature: Product API
 
   Background:
-    Given the inventory is empty
+    Given the database is empty
 
   Scenario: Saving articles and then creating products out of them
     Given these articles are added to the inventory:
@@ -60,6 +60,7 @@ Feature: Product API
           "id": 1,
           "name": "Dining Chair",
           "price": 19.90,
+          "quantityAvailable" : 2,
           "containArticles": [
             {
               "articleId": "1",
@@ -79,6 +80,7 @@ Feature: Product API
           "id": 2,
           "name": "Dinning Table",
           "price": 99.90,
+          "quantityAvailable" : 1,
           "containArticles": [
             {
               "articleId": "1",

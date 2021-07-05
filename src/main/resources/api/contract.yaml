@@ -72,6 +72,9 @@ components:
         price:
           type: number
           format: double
+        quantityAvailable:
+          type: integer
+          format: int64
         containArticles:
           type: array
           items:

@@ -10,9 +10,10 @@ fun ProductDto.toModel(): Product = Product(
     price = this.price
 )
 
-fun Product.toDto(): ProductDto = ProductDto(
+fun Product.toDto(quantityAvailable: Long): ProductDto = ProductDto(
     id = this.id,
     name = this.name,
     price = this.price,
-    containArticles = this.containArticles?.let { ar -> ar.map { ContainArticlesDto(it.article!!.id!!, it.amount) } } ?: emptyList()
+    quantityAvailable = quantityAvailable,
+    containArticles = this.containArticles?.let { ar -> ar.map { ContainArticlesDto(it.article!!.id, it.amount) } } ?: emptyList()
 )

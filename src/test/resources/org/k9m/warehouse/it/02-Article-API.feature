@@ -1,7 +1,7 @@
 Feature: Article API
 
   Background:
-    Given the inventory is empty
+    Given the database is empty
 
   Scenario: Saving articles and then retrieving them
     Given these articles are added to the inventory:

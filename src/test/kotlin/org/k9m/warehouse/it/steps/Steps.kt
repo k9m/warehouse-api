@@ -44,7 +44,7 @@ class Steps {
         assertThat(response.status).isEqualTo("UP")
     }
 
-    @Then("^the inventory is empty$")
+    @Then("^the database is empty$")
     fun emptyInventory() {
         containsArticleRepository.deleteAll()
         productRepository.deleteAll()

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController
 class ProductController(val productService: ProductService) : ProductApi {
 
     override fun getProducts(): ResponseEntity<List<ProductDto>>{
-        return ResponseEntity.ok(productService.findAll())
+        return ResponseEntity.ok(productService.findAllProductsOnStock())
     }
 }
 
