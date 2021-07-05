@@ -10,7 +10,7 @@ fun ProductDto.toModel(): Product = Product(
     price = this.price
 )
 
-fun Product.toDto(quantityAvailable: Long): ProductDto = ProductDto(
+fun Product.toDto(quantityAvailable: Int): ProductDto = ProductDto(
     id = this.id,
     name = this.name,
     price = this.price,

@@ -1,14 +1,15 @@
 package org.k9m.warehouse.service
 
 import org.k9m.warehouse.api.model.ProductDto
+import org.k9m.warehouse.api.model.SellRequestDto
 import org.k9m.warehouse.persistence.ProductRepository
 import org.k9m.warehouse.persistence.converters.toDto
 import org.springframework.stereotype.Component
 
 @Component
 class ProductService(
-    val productTransactions: ProductTransactions,
-    val productRepository: ProductRepository) {
+    private val productTransactions: ProductTransactions,
+    private val productRepository: ProductRepository) {
 
     fun saveProduct(productDto: ProductDto) : ProductDto{
         val product = productTransactions.saveProduct(productDto)
@@ -18,6 +19,10 @@ class ProductService(
     fun findAllProductsOnStock(): List<ProductDto> {
         val products = productRepository.findAll()
         return products.map { it.toDto(productTransactions.findAvailableQuantity(it)) }
+    }
+
+    fun sellProductIfAvailable(sellRequestDto: SellRequestDto){
+        productTransactions.sellProductIfAvailable(sellRequestDto)
     }
 
 

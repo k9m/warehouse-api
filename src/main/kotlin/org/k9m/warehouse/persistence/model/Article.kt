@@ -10,7 +10,7 @@ data class Article(
     @Id
     val id: Long,
     val name: String,
-    val stock: Long,
+    val stock: Int,
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "article")
     val product: List<ContainArticle>? = null

@@ -37,6 +37,27 @@ paths:
                 items:
                   $ref: "#/components/schemas/Product"
 
+  /v1/products/sell:
+    post:
+      tags:
+        - Product
+      summary: Requests the sale of a product if there is inventory available
+      operationId: sellProduct
+      requestBody:
+        description: Sale Request
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SellRequest"
+      responses:
+        '200':
+          description: Sale Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SellRequest"
+
 components:
   schemas:
 
@@ -54,7 +75,7 @@ components:
           type: string
         stock:
           type: integer
-          format: int64
+          format: int32
 
     Product:
       type: object
@@ -74,7 +95,7 @@ components:
           format: double
         quantityAvailable:
           type: integer
-          format: int64
+          format: int32
         containArticles:
           type: array
           items:
@@ -91,7 +112,20 @@ components:
           format: int64
         amount:
           type: integer
+          format: int32
+
+    SellRequest:
+      type: object
+      required:
+        - productId
+        - quanityRequested
+      properties:
+        productId:
+          type: integer
           format: int64
+        quanityRequested:
+          type: integer
+          format: int32
 
     ErrorObject:
       type: object

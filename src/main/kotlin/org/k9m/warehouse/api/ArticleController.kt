@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class ArticleController(val articleRepository: ArticleRepository) : ArticleApi {
+class ArticleController(private val articleRepository: ArticleRepository) : ArticleApi {
 
     override fun getArticles(): ResponseEntity<List<ArticleDto>>{
         return ResponseEntity.ok(articleRepository.findAll().map { it.toDto() })

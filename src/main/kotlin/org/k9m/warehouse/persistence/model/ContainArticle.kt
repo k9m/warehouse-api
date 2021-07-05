@@ -8,7 +8,7 @@ data class ContainArticle(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long?,
 
-    val amount: Long,
+    val amount: Int,
 
     @ManyToOne
     @JoinColumn(name = "article_id", referencedColumnName = "id")

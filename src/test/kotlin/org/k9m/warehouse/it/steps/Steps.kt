@@ -7,6 +7,7 @@ import io.cucumber.java.en.When
 import org.assertj.core.api.Assertions.assertThat
 import org.k9m.warehouse.api.model.ArticleDto
 import org.k9m.warehouse.api.model.ProductDto
+import org.k9m.warehouse.api.model.SellRequestDto
 import org.k9m.warehouse.persistence.ArticleRepository
 import org.k9m.warehouse.persistence.ContainArticleRepository
 import org.k9m.warehouse.persistence.ProductRepository
@@ -75,6 +76,15 @@ class Steps {
         val expectedProducts: List<ProductDto> = objectMapper.readValue(productsStr)
         val products: List<ProductDto> = restTemplate.exchange(requestEntity, object: ParameterizedTypeReference<List<ProductDto>>(){}).body!!
         assertThat(products).containsAll(expectedProducts)
+    }
+
+
+    @Then("^a sale is requested with these details:$")
+    fun requestSale(saleRequests: List<SellRequestDto>) {
+        val saleRequest = saleRequests.first()
+        val requestEntity = RequestEntity<SellRequestDto>(saleRequest, HttpMethod.POST, URI.create("http://localhost:$serverPort/v1/products/sell"))
+        val response: SellRequestDto = restTemplate.exchange(requestEntity, object: ParameterizedTypeReference<SellRequestDto>(){}).body!!
+        assertThat(saleRequest).isEqualTo(response)
     }
 
 }
