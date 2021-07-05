@@ -6,13 +6,12 @@ import javax.persistence.Id
 import javax.persistence.OneToMany
 
 @Entity
-data class Article(
+data class Product(
     @Id
     val id: Long,
     val name: String,
-    val stock: Long,
+    val price: Double,
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "article")
-    val product: List<ContainArticle>? = null
-
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    val containArticles: List<ContainArticle>? = null
 )

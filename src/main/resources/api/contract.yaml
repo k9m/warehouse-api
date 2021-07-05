@@ -10,7 +10,7 @@ paths:
     get:
       tags:
         - Article
-      summary: Retrieves all articles in the warehouse
+      summary: Retrieves all Articles in the warehouse
       operationId: getArticles
       responses:
         '200':
@@ -21,32 +21,21 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Article"
-  /v1/article:
-    put:
+  /v1/products:
+    get:
       tags:
-        - Article
-      summary: Adds a new article into the warehouse
-      operationId: saveArticle
-      requestBody:
-        description: Article to be saved
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Article"
+        - Product
+      summary: Retrieves all Products in the warehouse
+      operationId: getProducts
       responses:
         '200':
-          description: Returns all Articles in the warehouse
+          description: Returns all Products in the warehouse
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Article"
-        404:
-          description: Article not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorObject"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
 
 components:
   schemas:
@@ -54,6 +43,7 @@ components:
     Article:
       type: object
       required:
+        - id
         - name
         - stock
       properties:
@@ -63,6 +53,40 @@ components:
         name:
           type: string
         stock:
+          type: integer
+          format: int64
+
+    Product:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - containArticles
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        price:
+          type: number
+          format: double
+        containArticles:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContainArticles"
+
+    ContainArticles:
+      type: object
+      required:
+        - articleId
+        - amount
+      properties:
+        articleId:
+          type: integer
+          format: int64
+        amount:
           type: integer
           format: int64
 

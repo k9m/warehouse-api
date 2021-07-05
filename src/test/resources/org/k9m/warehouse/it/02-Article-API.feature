@@ -1,4 +1,4 @@
-Feature: System Started check
+Feature: Article API
 
   Background:
     Given the inventory is empty
