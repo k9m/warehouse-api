@@ -13,12 +13,12 @@ class ProductService(
 
     fun saveProduct(productDto: ProductDto) : ProductDto{
         val product = productTransactions.saveProduct(productDto)
-        return product.toDto(productTransactions.findAvailableQuantity(product))
+        return product.toDto(productTransactions.findAvailableQuantity(product) ?: 0)
     }
 
     fun findAllProductsOnStock(): List<ProductDto> {
         val products = productRepository.findAll()
-        return products.map { it.toDto(productTransactions.findAvailableQuantity(it)) }
+        return products.map { it.toDto(productTransactions.findAvailableQuantity(it) ?: 0) }
     }
 
     fun sellProductIfAvailable(sellRequestDto: SellRequestDto){

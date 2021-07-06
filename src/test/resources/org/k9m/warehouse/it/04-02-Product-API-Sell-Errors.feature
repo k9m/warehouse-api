@@ -1,9 +1,9 @@
-Feature: Product API - Sell
+Feature: Product API - Sell Errors
 
   Background:
     Given the database is empty
 
-  Scenario: Saving articles and then creating products out of them, and selling some of these products
+  Scenario: Saving articles and then creating products out of them, and trying to sell a product that doesn't have enough stock
     Given these articles are added to the inventory:
       | id | name      | stock |
       | 1  | leg       | 12    |
@@ -53,12 +53,13 @@ Feature: Product API - Sell
         }
       ]
     """
-    Then a sale is requested with these details:
+    When a sale is requested with these details:
       | productId | quantityRequested |
-      | 1         | 2                |
+      | 1         | 4                 |
+    Then a client error should be returned with message: Not enough stock for article with id: 1 (16/12 needed/have) and status code 417
     Then calling /articles endpoint should return:
       | id | name      | stock |
-      | 1  | leg       | 4     |
-      | 2  | screw     | 1     |
-      | 3  | seat      | 0     |
+      | 1  | leg       | 12    |
+      | 2  | screw     | 17    |
+      | 3  | seat      | 2     |
       | 4  | table top | 1     |

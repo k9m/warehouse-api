@@ -13,7 +13,6 @@ import org.k9m.warehouse.service.exception.ArticleNotFoundException
 import org.k9m.warehouse.service.exception.NoStockException
 import org.k9m.warehouse.service.exception.ProductNotFoundException
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Propagation
 import org.springframework.transaction.annotation.Transactional
 
 @Component
@@ -22,7 +21,7 @@ class ProductTransactions(
     private val productRepository: ProductRepository,
     private val containArticleRepository: ContainArticleRepository) {
 
-    @Transactional(propagation = Propagation.SUPPORTS)
+    @Transactional
     fun saveProduct(productDto: ProductDto): Product {
         val product = productRepository.save(productDto.toModel())
         productDto.containArticles.forEach { ar ->
@@ -33,15 +32,15 @@ class ProductTransactions(
         return productRepository.findById(product.id).orElseThrow{ ProductNotFoundException("Product not found with id: ${product.id}") }
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS)
-    fun findAvailableQuantity(product: Product) : Int{
+    @Transactional
+    fun findAvailableQuantity(product: Product) : Int?{
         val quantitiesAvailable = mutableListOf<Int>()
         product.containArticles?.forEach { ar ->
             val article = articleRepository.findById(ar.article!!.id).orElseThrow{ ArticleNotFoundException("Article not found with id: ${ar.article.id}") }
             quantitiesAvailable.add(article.stock / ar.amount)
         }
 
-        return quantitiesAvailable.minOrNull()!!
+        return quantitiesAvailable.minOrNull()
     }
 
     @Transactional(rollbackFor = [ProductNotFoundException::class, ArticleNotFoundException::class, NoStockException::class])

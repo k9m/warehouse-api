@@ -6,6 +6,7 @@ import io.cucumber.java.en.Then
 import io.cucumber.java.en.When
 import org.assertj.core.api.Assertions.assertThat
 import org.k9m.warehouse.api.model.ArticleDto
+import org.k9m.warehouse.api.model.ErrorObjectDto
 import org.k9m.warehouse.api.model.ProductDto
 import org.k9m.warehouse.api.model.SellRequestDto
 import org.k9m.warehouse.persistence.ArticleRepository
@@ -18,6 +19,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpMethod
 import org.springframework.http.RequestEntity
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.getForObject
 import java.net.URI
@@ -37,6 +39,10 @@ class Steps {
     @Autowired private lateinit var productRepository: ProductRepository
     @Autowired private lateinit var productService: ProductService
     @Autowired private lateinit var objectMapper: ObjectMapper
+
+    private var lastThrownClientException: HttpClientErrorException? = null
+    private var lastThrownException: Exception? = null
+    private var saleResponse: SellRequestDto? = null
 
 
     @When("^Health endpoint is available on (.*)$")
@@ -60,7 +66,11 @@ class Steps {
     @Then("^these products are created:$")
     fun saveProducts(productsStr: String) {
         val products: List<ProductDto> = objectMapper.readValue(productsStr)
-        products.forEach { productService.saveProduct(it) }
+        try {
+            products.forEach { productService.saveProduct(it) }
+        } catch (e: Exception) {
+            lastThrownException = e
+        }
     }
 
     @Then("^calling /articles endpoint should return:$")
@@ -79,12 +89,37 @@ class Steps {
     }
 
 
-    @Then("^a sale is requested with these details:$")
+    @When("^a sale is requested with these details:$")
     fun requestSale(saleRequests: List<SellRequestDto>) {
         val saleRequest = saleRequests.first()
         val requestEntity = RequestEntity<SellRequestDto>(saleRequest, HttpMethod.POST, URI.create("http://localhost:$serverPort/v1/products/sell"))
-        val response: SellRequestDto = restTemplate.exchange(requestEntity, object: ParameterizedTypeReference<SellRequestDto>(){}).body!!
-        assertThat(saleRequest).isEqualTo(response)
+        try {
+            saleResponse =  restTemplate.exchange(requestEntity, object: ParameterizedTypeReference<SellRequestDto>(){}).body!!
+        }
+        catch (e: HttpClientErrorException) {
+            lastThrownClientException = e
+        }
+    }
+
+    @Then("^this sale sale response should be received:$")
+    fun assertSaleResponse(saleRequests: List<SellRequestDto>) {
+        val saleRequest = saleRequests.first()
+        assertThat(saleRequest).isEqualTo(saleResponse)
+    }
+
+    @Then("^a client error should be returned with message: (.*) and status code (\\d+)$")
+    fun clientErrorReceived(message: String, statusCode: Int) {
+        assertThat(lastThrownClientException).isNotNull
+        val errorObject: ErrorObjectDto = objectMapper.readValue(lastThrownClientException!!.responseBodyAsString, ErrorObjectDto::class.java)
+
+        assertThat(errorObject.message).isEqualTo(message)
+        assertThat(errorObject.statusCode).isEqualTo(statusCode)
+    }
+
+    @Then("^an error should be returned with message: (.*)$")
+    fun errorReceived(message: String) {
+        assertThat(lastThrownException).isNotNull
+        assertThat(lastThrownException!!.message).isEqualTo(message)
     }
 
 }
