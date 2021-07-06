@@ -18,5 +18,22 @@ The warehouse software should also have products, products are made of different
 The products should also be loaded from a file, see the attached products.json.
 
 The warehouse should have at least the following functionality;
-* Get all products and quantity of each that is an available with the current inventory
-* Remove(Sell) a product and update the inventory accordingly
+* ~~Get all products and quantity of each that is an available with the current inventory~~
+* ~~Remove(Sell) a product and update the inventory accordingly~~
+
+---
+---
+## Notes
+* I've changed the json layout slightly to suit it better my implementation (and to JSON standards)
+* The project was built in a contract-first manner, the public API and models are defined in `resources/contract.yml`
+* The API interface and models are generated
+* Swagger UI is accessible from `http://localhost:8080/swagger-ui.html`
+* Integration tests use the Cucumber framework, feature files are in `src/test/resources`
+* Jacoco coverage reports can be found at `build/jacoco-reports` (the build needs to be run with `verify` to enable IT tests)
+* Import `src/main/resources/api/contract.yaml` to Postman to use the API
+
+## Future Work
+* Creating CRUD API for Inventory and Product
+* Implementing pagination for responses
+* Covering more edge cases with tests
+* Implementing Oauth or JWT to secure the API
